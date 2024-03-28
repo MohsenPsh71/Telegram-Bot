@@ -39,7 +39,7 @@ namespace TelegramClientApp
             var firstname = update.Message.From.FirstName;
 
             if (text == "/start")
-                await bot.SendTextMessageAsync(chatId, $"Hido {firstname}");
+                await bot.SendTextMessageAsync(chatId, $"Hi {firstname}");
             else
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}\nYou Entered : {text}");
         }
