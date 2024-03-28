@@ -1,7 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using Color = System.Drawing.Color;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramClientApp
 {
@@ -17,7 +17,7 @@ namespace TelegramClientApp
             var bot = new Telegram.Bot.TelegramBotClient(txtToken.Text.Trim());
 
             lblStatus.Text = "Online";
-            lblStatus.ForeColor = Color.Green;
+            lblStatus.ForeColor = System.Drawing.Color.Green;
 
             var receivingOptions = new ReceiverOptions()
             {
@@ -39,9 +39,67 @@ namespace TelegramClientApp
             var firstname = update.Message.From.FirstName;
 
             if (text == "/start")
-                await bot.SendTextMessageAsync(chatId, $"Hi {firstname}");
+                await bot.SendTextMessageAsync(chatId, $"Hi {firstname}", replyMarkup: GenerateMainKeyboard());
+            else if (text == "button 1")
+            {
+                var rows = new List<KeyboardButton[]>();
+
+                // Row 1
+                rows.Add(new KeyboardButton[]
+                {
+                    new KeyboardButton(MyTexts.Button1)
+                });
+
+                // Row 2
+                rows.Add(new KeyboardButton[]
+                {
+                    new KeyboardButton("Button 2"),
+                    new KeyboardButton("Button 3")
+                });
+
+                // Row 3
+                rows.Add(new KeyboardButton[]
+                {
+                    new KeyboardButton("Back")
+                });
+
+                var keyboard = new ReplyKeyboardMarkup(rows);
+
+                await bot.SendTextMessageAsync(chatId, $"Hi", replyMarkup: keyboard);
+            }
+            else if (text == "back")
+                await bot.SendTextMessageAsync(chatId, $"Hi {firstname}", replyMarkup: GenerateMainKeyboard());
             else
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}\nYou Entered : {text}");
+        }
+
+        private ReplyKeyboardMarkup GenerateMainKeyboard()
+        {
+            var rows = new List<KeyboardButton[]>();
+
+            // Row 1
+            rows.Add(new KeyboardButton[]
+            {
+                    new KeyboardButton("Button 1"),
+                    new KeyboardButton("Button 2"),
+                    new KeyboardButton("Button 3")
+            });
+
+            // Row 2
+            rows.Add(new KeyboardButton[]
+            {
+                    new KeyboardButton("Button 4")
+            });
+
+            // Row 3
+            rows.Add(new KeyboardButton[]
+            {
+                    new KeyboardButton("Button 5"),
+                    new KeyboardButton("Button 6")
+            });
+
+            var keyboard = new ReplyKeyboardMarkup(rows);
+            return keyboard;
         }
 
         private async Task errorHandler(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)
