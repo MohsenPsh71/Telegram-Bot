@@ -1,4 +1,4 @@
-namespace Telegram_Bot
+namespace TelegramClientApp
 {
     internal static class Program
     {
