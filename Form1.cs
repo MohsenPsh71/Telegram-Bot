@@ -1,4 +1,4 @@
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -11,6 +11,10 @@ namespace TelegramClientApp
         {
             InitializeComponent();
         }
+
+        int yes = 0;
+        int no = 0;
+        int alaki = 0;
 
         private void txtConnect_Click(object sender, EventArgs e)
         {
@@ -31,8 +35,13 @@ namespace TelegramClientApp
             bot.StartReceiving(updateHandler: updateHandler, errorHandler, receivingOptions);
         }
 
-        private async Task updateHandler(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
+        private async Task<int> updateHandler(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
         {
+            if(update.CallbackQuery != null)
+            {
+                return (await ManageCallbackQueryAsync(update, bot, cancellationToken));
+            }
+            
             var text = update.Message.Text.ToLower();
             var chatId = update.Message.Chat.Id;
             var sendDate = update.Message.Date;
@@ -40,7 +49,7 @@ namespace TelegramClientApp
 
             if (text == "/start")
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}", replyMarkup: GenerateMainKeyboard());
-            else if (text == "button 1")
+            else if(text == "button 1")
             {
                 var rows = new List<KeyboardButton[]>();
 
@@ -67,10 +76,65 @@ namespace TelegramClientApp
 
                 await bot.SendTextMessageAsync(chatId, $"Hi", replyMarkup: keyboard);
             }
-            else if (text == "back")
+
+            else if(text == "button 2")
+            {
+                await bot.SendTextMessageAsync(chatId, $"آیا از این ربات راضی هستید؟", replyMarkup: GenerateInlineKeyboard());
+            }
+
+            else if(text == "back")
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}", replyMarkup: GenerateMainKeyboard());
             else
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}\nYou Entered : {text}");
+
+            return 0;
+        }
+
+        private async Task<int> ManageCallbackQueryAsync(Update update, ITelegramBotClient bot, CancellationToken cancellationToken)
+        {
+            var text = update.CallbackQuery.Data.ToLower();
+            var chatId = update.CallbackQuery.Message.Chat.Id;
+            var messageId = update.CallbackQuery.Message.MessageId;
+
+            if(text == "yes")
+            {
+                yes++;
+                await bot.SendTextMessageAsync(chatId, $"مرسی که از ما راضی هستید");
+            }
+            else if(text == "no")
+            {
+                no++;
+                await bot.SendTextMessageAsync(chatId, $"چرا اینجوری میگی داداش");
+            }
+            else
+            {
+                alaki++;
+                await bot.SendTextMessageAsync(chatId, $"باشه");
+            }
+
+            //await bot.SendTextMessageAsync(chatId, $"آیا از این ربات راضی هستید؟", replyMarkup: GenerateInlineKeyboard());
+            await bot.EditMessageTextAsync(chatId, messageId, $"آیا از این ربات راضی هستید؟", replyMarkup: GenerateInlineKeyboard());
+
+            return 0;
+        }
+
+        private InlineKeyboardMarkup GenerateInlineKeyboard()
+        {
+            var rows = new List<InlineKeyboardButton[]>()
+            {
+                new InlineKeyboardButton[]
+                {
+                    new InlineKeyboardButton($"بله {yes}") { CallbackData = "yes" },
+                    new InlineKeyboardButton($"خیر {no}") { CallbackData = "no" }
+                },
+                new InlineKeyboardButton[]
+                {
+                    new InlineKeyboardButton($"نظری ندارم {alaki}") { CallbackData = "alaki" }
+                }
+            };
+
+            var keyboard = new InlineKeyboardMarkup(rows);
+            return keyboard;
         }
 
         private ReplyKeyboardMarkup GenerateMainKeyboard()
