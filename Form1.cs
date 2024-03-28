@@ -28,7 +28,10 @@ namespace TelegramClientApp
                 AllowedUpdates = new Telegram.Bot.Types.Enums.UpdateType[]
                 {
                     Telegram.Bot.Types.Enums.UpdateType.Message,
-                    Telegram.Bot.Types.Enums.UpdateType.CallbackQuery
+                    Telegram.Bot.Types.Enums.UpdateType.CallbackQuery,
+
+                    Telegram.Bot.Types.Enums.UpdateType.Poll,
+                    Telegram.Bot.Types.Enums.UpdateType.PollAnswer
                 }
             };
 
@@ -40,6 +43,18 @@ namespace TelegramClientApp
             if(update.CallbackQuery != null)
             {
                 return (await ManageCallbackQueryAsync(update, bot, cancellationToken));
+            }
+
+            if(update.Poll != null)
+            {
+                return 0;
+            }
+
+            if(update.PollAnswer != null)
+            {
+                string x = update.PollAnswer.OptionIds[0] == 1 ? "درست" : "نادرست";
+                await bot.SendTextMessageAsync(update.PollAnswer.User.Id, $"کاربر گرامی, {update.PollAnswer.User.FirstName} شما گزینه {x} را انتخاب کرده اید");
+                return 0;
             }
             
             var text = update.Message.Text.ToLower();
@@ -80,6 +95,25 @@ namespace TelegramClientApp
             else if(text == "button 2")
             {
                 await bot.SendTextMessageAsync(chatId, $"آیا از این ربات راضی هستید؟", replyMarkup: GenerateInlineKeyboard());
+            }
+
+            else if(text == "button 3")
+            {
+                //var message = await bot.SendPollAsync(chatId: chatId
+                //    , question: "آیا از این ربات راضی هستید؟"
+                //    , options: new string[] { "بله", "خیر", "دیدن نتایج" }
+                //    , type: Telegram.Bot.Types.Enums.PollType.Regular
+                //    , cancellationToken: cancellationToken);
+
+                var message = await bot.SendPollAsync(chatId: chatId
+                    , isAnonymous: false
+                    , question: "امسال چه سالی است؟"
+                    , options: new string[] { "1401", "1402", "1403" }
+                    , correctOptionId: 1
+                    , type: Telegram.Bot.Types.Enums.PollType.Quiz
+                    , closeDate: DateTime.Now.AddMinutes(1)
+                    , cancellationToken: cancellationToken);
+
             }
 
             else if(text == "back")
