@@ -1,7 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using Color = System.Drawing.Color;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramClientApp
 {
