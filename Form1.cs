@@ -137,7 +137,7 @@ namespace TelegramClientApp
                 //var stream = new StreamReader("1.mp4").BaseStream;
                 //await bot.SendVideoAsync(chatId, new InputOnlineFile(stream));
 
-                await bot.SendContactAsync(chatId, "+989215488280", "فرزام",null, "یمینی");
+                await bot.SendContactAsync(chatId, "+989397476083", "Mohsen",null, "Pourvand");
 
                 await bot.SendVenueAsync(chatId, 50.345678, 18.987654, "Title is IRAN", "Address is Tehran");
             }
