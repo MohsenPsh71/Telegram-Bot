@@ -1,7 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
+using Color = System.Drawing.Color;
 
 namespace TelegramClientApp
 {
@@ -39,7 +39,7 @@ namespace TelegramClientApp
             var firstname = update.Message.From.FirstName;
 
             if (text == "/start")
-                await bot.SendTextMessageAsync(chatId, $"Hidodo {firstname}");
+                await bot.SendTextMessageAsync(chatId, $"Hi {firstname}");
             else
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}\nYou Entered : {text}");
         }
