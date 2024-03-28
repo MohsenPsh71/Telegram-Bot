@@ -2,6 +2,7 @@
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using Color = System.Drawing.Color;
 
 namespace TelegramClientApp
 {
@@ -21,7 +22,7 @@ namespace TelegramClientApp
             var bot = new Telegram.Bot.TelegramBotClient(txtToken.Text.Trim());
 
             lblStatus.Text = "Online";
-            lblStatus.ForeColor = System.Drawing.Color.Green;
+            lblStatus.ForeColor = Color.Green;
 
             var receivingOptions = new ReceiverOptions()
             {
@@ -40,23 +41,23 @@ namespace TelegramClientApp
 
         private async Task<int> updateHandler(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
         {
-            if(update.CallbackQuery != null)
+            if (update.CallbackQuery != null)
             {
                 return (await ManageCallbackQueryAsync(update, bot, cancellationToken));
             }
 
-            if(update.Poll != null)
+            if (update.Poll != null)
             {
                 return 0;
             }
 
-            if(update.PollAnswer != null)
+            if (update.PollAnswer != null)
             {
                 string x = update.PollAnswer.OptionIds[0] == 1 ? "درست" : "نادرست";
                 await bot.SendTextMessageAsync(update.PollAnswer.User.Id, $"کاربر گرامی, {update.PollAnswer.User.FirstName} شما گزینه {x} را انتخاب کرده اید");
                 return 0;
             }
-            
+
             var text = update.Message.Text.ToLower();
             var chatId = update.Message.Chat.Id;
             var sendDate = update.Message.Date;
@@ -64,7 +65,7 @@ namespace TelegramClientApp
 
             if (text == "/start")
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}", replyMarkup: GenerateMainKeyboard());
-            else if(text == "button 1")
+            else if (text == "button 1")
             {
                 var rows = new List<KeyboardButton[]>();
 
@@ -92,12 +93,12 @@ namespace TelegramClientApp
                 await bot.SendTextMessageAsync(chatId, $"Hi", replyMarkup: keyboard);
             }
 
-            else if(text == "button 2")
+            else if (text == "button 2")
             {
                 await bot.SendTextMessageAsync(chatId, $"آیا از این ربات راضی هستید؟", replyMarkup: GenerateInlineKeyboard());
             }
 
-            else if(text == "button 3")
+            else if (text == "button 3")
             {
                 //var message = await bot.SendPollAsync(chatId: chatId
                 //    , question: "آیا از این ربات راضی هستید؟"
@@ -116,7 +117,32 @@ namespace TelegramClientApp
 
             }
 
-            else if(text == "back")
+            else if (text == "button 4")
+            {
+                //var imageFile1 = new InputOnlineFile("https://picsum.photos/200/300.jpg");
+                //var message = await bot.SendPhotoAsync(chatId, imageFile1, caption: "this file sent by url");
+
+                //// Recommended
+                //var imageFile2 = new InputOnlineFile(message.Photo[0].FileId);
+                //await bot.SendPhotoAsync(chatId, imageFile2, caption: "this file sent by file_id");
+
+                //var stream = new StreamReader("1.jpg").BaseStream;
+                //var imageFile3 = new InputOnlineFile(stream);
+                //await bot.SendPhotoAsync(chatId, imageFile3, caption: "this file sent by stream");
+
+                //var stream = new StreamReader("1.mp3").BaseStream;
+                //await bot.SendVoiceAsync(chatId, new InputOnlineFile(stream), caption: "voice");
+                //await bot.SendAudioAsync(chatId, new InputOnlineFile("https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3"), caption: "Audio");
+
+                //var stream = new StreamReader("1.mp4").BaseStream;
+                //await bot.SendVideoAsync(chatId, new InputOnlineFile(stream));
+
+                await bot.SendContactAsync(chatId, "+989215488280", "فرزام",null, "یمینی");
+
+                await bot.SendVenueAsync(chatId, 50.345678, 18.987654, "Title is IRAN", "Address is Tehran");
+            }
+
+            else if (text == "back")
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}", replyMarkup: GenerateMainKeyboard());
             else
                 await bot.SendTextMessageAsync(chatId, $"Hi {firstname}\nYou Entered : {text}");
@@ -130,12 +156,12 @@ namespace TelegramClientApp
             var chatId = update.CallbackQuery.Message.Chat.Id;
             var messageId = update.CallbackQuery.Message.MessageId;
 
-            if(text == "yes")
+            if (text == "yes")
             {
                 yes++;
                 await bot.SendTextMessageAsync(chatId, $"مرسی که از ما راضی هستید");
             }
-            else if(text == "no")
+            else if (text == "no")
             {
                 no++;
                 await bot.SendTextMessageAsync(chatId, $"چرا اینجوری میگی داداش");
